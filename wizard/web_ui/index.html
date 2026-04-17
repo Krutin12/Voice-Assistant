@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wizard Voice Assistant</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      color: #e0e0e0;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+      -webkit-app-region: drag;
+      background: #000;
+    }
+
+    /* ====== ANIMATED BACKGROUND ====== */
+    #bg-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    #canvas-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      -webkit-app-region: no-drag;
+    }
+
+    /* HUD Overlay */
+    #hud {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: 20px 30px 30px;
+      background: linear-gradient(to top, rgba(2,2,8,0.95) 0%, rgba(2,2,8,0.6) 50%, transparent 100%);
+      pointer-events: none;
+    }
+
+    #status-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    #state-indicator {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #7b2fbe;
+      box-shadow: 0 0 12px rgba(123, 47, 190, 0.8);
+      transition: all 0.4s ease;
+      flex-shrink: 0;
+    }
+    #state-indicator.idle      { background: #7b2fbe; box-shadow: 0 0 12px rgba(123,47,190,0.8); }
+    #state-indicator.listening  { background: #00e5ff; box-shadow: 0 0 18px rgba(0,229,255,0.9); animation: pulse 1.2s ease-in-out infinite; }
+    #state-indicator.thinking   { background: #ffd740; box-shadow: 0 0 18px rgba(255,215,64,0.9); animation: pulse 0.8s ease-in-out infinite; }
+    #state-indicator.speaking   { background: #e040fb; box-shadow: 0 0 18px rgba(224,64,251,0.9); animation: pulse 0.6s ease-in-out infinite; }
+    #state-indicator.error      { background: #ff5252; box-shadow: 0 0 18px rgba(255,82,82,0.9); }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    #state-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #7b2fbe;
+      transition: color 0.4s ease;
+    }
+
+    #status-text {
+      font-size: 15px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.8);
+      min-height: 22px;
+      transition: all 0.3s ease;
+      text-shadow: 0 0 10px rgba(123,47,190,0.3);
+    }
+
+    #command-text {
+      font-size: 13px;
+      font-style: italic;
+      color: #e040fb;
+      opacity: 0.85;
+      min-height: 18px;
+      margin-top: 4px;
+    }
+
+    /* Audio visualizer */
+    #visualizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 30px;
+      margin-top: 14px;
+    }
+    .viz-bar {
+      width: 4px;
+      background: linear-gradient(to top, #7b2fbe, #e040fb);
+      border-radius: 2px;
+      transition: height 0.08s ease-out;
+      opacity: 0.7;
+    }
+
+    /* Title with glow */
+    #title {
+      position: fixed;
+      top: 16px;
+      left: 20px;
+      z-index: 10;
+      font-family: 'Orbitron', monospace;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 5px;
+      background: linear-gradient(135deg, #7b2fbe, #e040fb, #00e5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 10px rgba(123,47,190,0.5));
+    }
+
+    /* Connection dot */
+    #connection-dot {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff5252;
+      box-shadow: 0 0 8px rgba(255,82,82,0.6);
+      transition: all 0.3s;
+    }
+    #connection-dot.connected {
+      background: #00e676;
+      box-shadow: 0 0 8px rgba(0,230,118,0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- 3D Canvas -->
+  <div id="canvas-container"></div>
+
+  <!-- Top HUD -->
+  <div id="title">WIZARD</div>
+  <div id="connection-dot" title="Voice Assistant Connection"></div>
+
+  <!-- Bottom HUD -->
+  <div id="hud">
+    <div id="status-bar">
+      <div id="state-indicator" class="idle"></div>
+      <div id="state-label">IDLE</div>
+    </div>
+    <div id="status-text">Initializing 3D character...</div>
+    <div id="command-text"></div>
+    <div id="visualizer"></div>
+  </div>
+
+  <!-- Three.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    // ============================================================
+    //  ANIMATED BACKGROUND — Nebula / Cosmic Scene
+    // ============================================================
+    (function initBackground() {
+      const bgCanvas = document.getElementById('bg-canvas');
+      const ctx = bgCanvas.getContext('2d');
+      let bgW, bgH;
+
+      function resizeBg() {
+        bgW = bgCanvas.width = window.innerWidth;
+        bgH = bgCanvas.height = window.innerHeight;
+      }
+      resizeBg();
+      window.addEventListener('resize', resizeBg);
+
+      // Star field
+      const stars = [];
+      for (let i = 0; i < 200; i++) {
+        stars.push({
+          x: Math.random() * 2000 - 500,
+          y: Math.random() * 2000 - 500,
+          r: Math.random() * 1.5 + 0.3,
+          speed: Math.random() * 0.15 + 0.02,
+          alpha: Math.random() * 0.6 + 0.4,
+          flicker: Math.random() * Math.PI * 2,
+        });
+      }
+
+      // Nebula blobs
+      const nebulae = [
+        { x: 0.2, y: 0.3, r: 300, color: [123, 47, 190], phase: 0 },
+        { x: 0.8, y: 0.7, r: 250, color: [0, 229, 255], phase: 2 },
+        { x: 0.5, y: 0.9, r: 280, color: [224, 64, 251], phase: 4 },
+        { x: 0.1, y: 0.8, r: 200, color: [29, 233, 182], phase: 1 },
+        { x: 0.9, y: 0.2, r: 220, color: [255, 215, 64], phase: 3 },
+      ];
+
+      let stateColor = [123, 47, 190]; // Default purple
+      const stateColors = {
+        idle:      [123, 47, 190],
+        listening: [0, 229, 255],
+        thinking:  [255, 215, 64],
+        speaking:  [224, 64, 251],
+        error:     [255, 82, 82],
+      };
+
+      // Expose state change for background
+      window.setBgState = function(state) {
+        stateColor = stateColors[state] || stateColors.idle;
+      };
+
+      let time = 0;
+      function drawBackground() {
+        time += 0.003;
+        ctx.fillStyle = '#020208';
+        ctx.fillRect(0, 0, bgW, bgH);
+
+        // Draw nebula blobs
+        for (const neb of nebulae) {
+          const nx = neb.x * bgW + Math.sin(time + neb.phase) * 40;
+          const ny = neb.y * bgH + Math.cos(time * 0.7 + neb.phase) * 30;
+          const nr = neb.r + Math.sin(time * 0.5 + neb.phase) * 30;
+          const gradient = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr);
+          gradient.addColorStop(0, `rgba(${neb.color[0]},${neb.color[1]},${neb.color[2]}, 0.08)`);
+          gradient.addColorStop(0.5, `rgba(${neb.color[0]},${neb.color[1]},${neb.color[2]}, 0.03)`);
+          gradient.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, bgW, bgH);
+        }
+
+        // State-reactive central glow
+        const cx = bgW * 0.5 + Math.sin(time * 0.8) * 20;
+        const cy = bgH * 0.5 + Math.cos(time * 0.6) * 15;
+        const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 350);
+        cg.addColorStop(0, `rgba(${stateColor[0]},${stateColor[1]},${stateColor[2]}, 0.06)`);
+        cg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = cg;
+        ctx.fillRect(0, 0, bgW, bgH);
+
+        // Draw stars
+        for (const s of stars) {
+          s.flicker += 0.02;
+          const a = s.alpha * (0.7 + 0.3 * Math.sin(s.flicker));
+          ctx.beginPath();
+          ctx.arc(s.x % bgW, s.y % bgH, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(220, 220, 255, ${a})`;
+          ctx.fill();
+          s.y += s.speed;
+          if (s.y > bgH + 10) { s.y = -10; s.x = Math.random() * bgW; }
+        }
+
+        requestAnimationFrame(drawBackground);
+      }
+      drawBackground();
+    })();
+
+    // ============================================================
+    //  WIZARD 3D CHARACTER ENGINE
+    // ============================================================
+
+    const CONFIG = {
+      modelPath: '/model/lightning_mage.glb',
+      wsPort: 8769,
+      vizBars: 40,
+    };
+
+    // --- State ---
+    let currentState = 'idle';
+    let model = null;
+    let mixer = null;
+    let clock = new THREE.Clock();
+    let animations = {};
+
+    // Body part mesh references
+    let bodyParts = {
+      head: null,
+      jaw: null,
+      leftArm: null,
+      rightArm: null,
+      leftHand: null,
+      rightHand: null,
+      torso: null,
+      whole: null,
+    };
+
+    let allNodes = [];
+
+    // Animation values
+    let anim = {
+      mouthOpen: 0,
+      mouthTarget: 0,
+      gesturePhase: 0,
+      gestureIntensity: 0,
+      gestureTarget: 0,
+      breathPhase: 0,
+      nodPhase: 0,
+      idleSway: 0,
+      speakTimer: 0,
+    };
+
+    let originalTransforms = new Map();
+
+    // --- Three.js Setup ---
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 1.2, 3.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.3;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setClearColor(0x000000, 0); // Transparent so bg-canvas shows through
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    // Controls
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.enablePan = false;
+    controls.minDistance = 1.5;
+    controls.maxDistance = 8;
+    controls.target.set(0, 1.0, 0);
+    controls.maxPolarAngle = Math.PI * 0.85;
+
+    // --- Lighting ---
+    scene.add(new THREE.AmbientLight(0x404060, 0.6));
+
+    const keyLight = new THREE.DirectionalLight(0xffeedd, 1.3);
+    keyLight.position.set(3, 5, 4);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(2048, 2048);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x7b2fbe, 0.5);
+    fillLight.position.set(-3, 2, -2);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0x00e5ff, 0.7);
+    rimLight.position.set(0, 3, -4);
+    scene.add(rimLight);
+
+    const spotLight = new THREE.SpotLight(0xe040fb, 0.4, 10, Math.PI / 6);
+    spotLight.position.set(0, 0.1, 2);
+    spotLight.target.position.set(0, 0, 0);
+    scene.add(spotLight);
+    scene.add(spotLight.target);
+
+    // Ground rings - magical platform
+    const ringGeo = new THREE.RingGeometry(0.6, 0.75, 64);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0x7b2fbe, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.01;
+    scene.add(ring);
+
+    const outerRingGeo = new THREE.RingGeometry(0.9, 0.92, 64);
+    const outerRingMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, side: THREE.DoubleSide, transparent: true, opacity: 0.15 });
+    const outerRing = new THREE.Mesh(outerRingGeo, outerRingMat);
+    outerRing.rotation.x = -Math.PI / 2;
+    outerRing.position.y = 0.01;
+    scene.add(outerRing);
+
+    // Inner magic circle
+    const innerRingGeo = new THREE.RingGeometry(0.35, 0.38, 64);
+    const innerRingMat = new THREE.MeshBasicMaterial({ color: 0xe040fb, side: THREE.DoubleSide, transparent: true, opacity: 0.2 });
+    const innerRing = new THREE.Mesh(innerRingGeo, innerRingMat);
+    innerRing.rotation.x = -Math.PI / 2;
+    innerRing.position.y = 0.01;
+    scene.add(innerRing);
+
+    // Magical Particles
+    const particleCount = 120;
+    const particlesGeo = new THREE.BufferGeometry();
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleSpeeds = [];
+    for (let i = 0; i < particleCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 3 + 0.5;
+      particlePositions[i*3] = Math.cos(angle) * dist;
+      particlePositions[i*3+1] = Math.random() * 4;
+      particlePositions[i*3+2] = Math.sin(angle) * dist;
+      particleSpeeds.push({
+        x: (Math.random()-0.5) * 0.003,
+        y: Math.random() * 0.004 + 0.001,
+        z: (Math.random()-0.5) * 0.003,
+        orbit: Math.random() * 0.005 + 0.001,
+        angle: angle,
+      });
+    }
+    particlesGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x7b2fbe,
+      size: 0.035,
+      transparent: true,
+      opacity: 0.6,
+      blending: THREE.AdditiveBlending,
+    });
+    const particles = new THREE.Points(particlesGeo, particleMat);
+    scene.add(particles);
+
+    // Visualizer bars
+    const vizContainer = document.getElementById('visualizer');
+    for (let i = 0; i < CONFIG.vizBars; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'viz-bar';
+      bar.style.height = '3px';
+      vizContainer.appendChild(bar);
+    }
+
+    // ============================================================
+    //  BODY PART DETECTION
+    // ============================================================
+
+    function findBodyParts() {
+      if (!model) return;
+
+      const meshes = [];
+      model.traverse((child) => {
+        if (child.isMesh || child.type === 'Mesh') {
+          const box = new THREE.Box3().setFromObject(child);
+          const size = box.getSize(new THREE.Vector3());
+          const center = box.getCenter(new THREE.Vector3());
+
+          meshes.push({
+            node: child,
+            name: child.name,
+            centerY: center.y,
+            centerX: center.x,
+            centerZ: center.z,
+            sizeY: size.y,
+            sizeX: size.x,
+            sizeZ: size.z,
+          });
+          allNodes.push(child);
+        }
+      });
+
+      console.log('Scanned', meshes.length, 'meshes');
+      meshes.forEach(m => console.log(`  ${m.name} Y=${m.centerY.toFixed(3)} X=${m.centerX.toFixed(3)} sizeY=${m.sizeY.toFixed(3)} sizeX=${m.sizeX.toFixed(3)}`));
+
+      const modelBox = new THREE.Box3().setFromObject(model);
+      const modelSize = modelBox.getSize(new THREE.Vector3());
+      const modelMin = modelBox.min;
+      const modelHeight = modelSize.y;
+      const modelCenterX = (modelBox.max.x + modelBox.min.x) / 2;
+
+      // --- HEAD: top 35% meshes ---
+      const headThresholdY = modelMin.y + modelHeight * 0.65;
+      const headMeshes = meshes.filter(m => m.centerY > headThresholdY && Math.abs(m.centerX - modelCenterX) < modelSize.x * 0.3);
+      if (headMeshes.length > 0) {
+        const headGroup = new THREE.Group();
+        headGroup.name = 'headGroup';
+        let avgX = 0, avgY = 0, avgZ = 0;
+        headMeshes.forEach(m => { avgX += m.centerX; avgY += m.centerY; avgZ += m.centerZ; });
+        avgX /= headMeshes.length; avgY /= headMeshes.length; avgZ /= headMeshes.length;
+
+        const headPivotY = headThresholdY;
+        headGroup.position.set(avgX, headPivotY, avgZ);
+        const headParent = headMeshes[0].node.parent;
+        headParent.add(headGroup);
+
+        for (const m of headMeshes) {
+          const origWorldPos = new THREE.Vector3();
+          m.node.getWorldPosition(origWorldPos);
+          headParent.remove(m.node);
+          headGroup.add(m.node);
+          const localPos = headGroup.worldToLocal(origWorldPos);
+          m.node.position.copy(localPos);
+        }
+        bodyParts.head = headGroup;
+        console.log('Head group created with', headMeshes.length, 'meshes');
+      }
+
+      // --- ARMS ---
+      const armXThreshold = modelCenterX + modelSize.x * 0.15;
+      const leftArmXThreshold = modelCenterX - modelSize.x * 0.15;
+      const armYMin = modelMin.y + modelHeight * 0.25;
+      const armYMax = modelMin.y + modelHeight * 0.75;
+
+      const rightArmMeshes = meshes.filter(m =>
+        m.centerX > armXThreshold && m.centerY > armYMin && m.centerY < armYMax
+      );
+      const leftArmMeshes = meshes.filter(m =>
+        m.centerX < leftArmXThreshold && m.centerY > armYMin && m.centerY < armYMax
+      );
+
+      if (rightArmMeshes.length > 0) {
+        const armGroup = new THREE.Group();
+        armGroup.name = 'rightArmGroup';
+        let avgX = 0, avgY = 0, avgZ = 0;
+        rightArmMeshes.forEach(m => { avgX += m.centerX; avgY += m.centerY; avgZ += m.centerZ; });
+        avgX /= rightArmMeshes.length; avgY /= rightArmMeshes.length; avgZ /= rightArmMeshes.length;
+        const shoulderX = modelCenterX + modelSize.x * 0.1;
+        const shoulderY = Math.max(...rightArmMeshes.map(m => m.centerY + m.sizeY/2));
+        armGroup.position.set(shoulderX, shoulderY, avgZ);
+        const armParent = rightArmMeshes[0].node.parent;
+        armParent.add(armGroup);
+        for (const m of rightArmMeshes) {
+          const origWorldPos = new THREE.Vector3();
+          m.node.getWorldPosition(origWorldPos);
+          armParent.remove(m.node);
+          armGroup.add(m.node);
+          const localPos = armGroup.worldToLocal(origWorldPos);
+          m.node.position.copy(localPos);
+        }
+        bodyParts.rightArm = armGroup;
+        console.log('Right arm group with', rightArmMeshes.length, 'meshes');
+      }
+
+      if (leftArmMeshes.length > 0) {
+        const armGroup = new THREE.Group();
+        armGroup.name = 'leftArmGroup';
+        let avgX = 0, avgY = 0, avgZ = 0;
+        leftArmMeshes.forEach(m => { avgX += m.centerX; avgY += m.centerY; avgZ += m.centerZ; });
+        avgX /= leftArmMeshes.length; avgY /= leftArmMeshes.length; avgZ /= leftArmMeshes.length;
+        const shoulderX = modelCenterX - modelSize.x * 0.1;
+        const shoulderY = Math.max(...leftArmMeshes.map(m => m.centerY + m.sizeY/2));
+        armGroup.position.set(shoulderX, shoulderY, avgZ);
+        const armParent = leftArmMeshes[0].node.parent;
+        armParent.add(armGroup);
+        for (const m of leftArmMeshes) {
+          const origWorldPos = new THREE.Vector3();
+          m.node.getWorldPosition(origWorldPos);
+          armParent.remove(m.node);
+          armGroup.add(m.node);
+          const localPos = armGroup.worldToLocal(origWorldPos);
+          m.node.position.copy(localPos);
+        }
+        bodyParts.leftArm = armGroup;
+        console.log('Left arm group with', leftArmMeshes.length, 'meshes');
+      }
+
+      // --- TORSO ---
+      const torsoYMin = modelMin.y + modelHeight * 0.25;
+      const torsoYMax = modelMin.y + modelHeight * 0.65;
+      const torsoCandidates = meshes.filter(m =>
+        m.centerY > torsoYMin && m.centerY < torsoYMax &&
+        Math.abs(m.centerX - modelCenterX) < modelSize.x * 0.15
+      ).sort((a,b) => (b.sizeY * b.sizeX) - (a.sizeY * a.sizeX));
+      if (torsoCandidates.length > 0) {
+        bodyParts.torso = torsoCandidates[0].node;
+      }
+
+      bodyParts.whole = model;
+
+      // Store original transforms
+      for (const [key, node] of Object.entries(bodyParts)) {
+        if (node) {
+          originalTransforms.set(node, {
+            px: node.position.x, py: node.position.y, pz: node.position.z,
+            rx: node.rotation.x, ry: node.rotation.y, rz: node.rotation.z,
+            sx: node.scale.x, sy: node.scale.y, sz: node.scale.z,
+          });
+          console.log('Body part [' + key + ']: ' + node.name);
+        }
+      }
+    }
+
+    function getOriginal(node) {
+      return originalTransforms.get(node) || { px:0, py:0, pz:0, rx:0, ry:0, rz:0 };
+    }
+
+    // ============================================================
+    //  ANIMATION ENGINE
+    // ============================================================
+
+    function animateCharacter(delta) {
+      const t = clock.getElapsedTime();
+      anim.breathPhase += delta;
+      anim.gesturePhase += delta * 2;
+      anim.speakTimer += delta;
+
+      // === MOUTH / JAW ===
+      if (currentState === 'speaking') {
+        if (Math.random() < 0.25) anim.mouthTarget = Math.random() * 0.6 + 0.3;
+        if (Math.random() < 0.08) anim.mouthTarget = 0.02;
+      } else {
+        anim.mouthTarget = 0;
+      }
+      anim.mouthOpen += (anim.mouthTarget - anim.mouthOpen) * 0.15;
+
+      if (bodyParts.jaw) {
+        const orig = getOriginal(bodyParts.jaw);
+        bodyParts.jaw.rotation.x = orig.rx + anim.mouthOpen * 0.12;
+        bodyParts.jaw.position.y = orig.py - anim.mouthOpen * 0.005;
+      }
+
+      // === HEAD ===
+      if (bodyParts.head) {
+        const orig = getOriginal(bodyParts.head);
+        if (currentState === 'speaking') {
+          bodyParts.head.rotation.x = orig.rx + Math.sin(t * 3.5) * 0.03 + anim.mouthOpen * 0.02;
+          bodyParts.head.rotation.y = orig.ry + Math.sin(t * 2.1) * 0.04;
+          bodyParts.head.rotation.z = orig.rz + Math.sin(t * 1.8) * 0.015;
+        } else if (currentState === 'thinking') {
+          bodyParts.head.rotation.x = orig.rx - 0.04;
+          bodyParts.head.rotation.z = orig.rz + 0.05 + Math.sin(t * 0.5) * 0.01;
+          bodyParts.head.rotation.y = orig.ry;
+        } else if (currentState === 'listening') {
+          bodyParts.head.rotation.z = orig.rz + 0.03;
+          bodyParts.head.rotation.x = orig.rx + Math.sin(t * 0.8) * 0.015;
+          bodyParts.head.rotation.y = orig.ry;
+        } else {
+          bodyParts.head.rotation.x += (orig.rx - bodyParts.head.rotation.x) * 2 * delta;
+          bodyParts.head.rotation.y += (orig.ry - bodyParts.head.rotation.y) * 2 * delta;
+          bodyParts.head.rotation.z += (orig.rz - bodyParts.head.rotation.z) * 2 * delta;
+        }
+      }
+
+      // === GESTURE INTENSITY ===
+      if (currentState === 'speaking') {
+        anim.gestureTarget = 1.0;
+      } else if (currentState === 'thinking') {
+        anim.gestureTarget = 0.5;
+      } else if (currentState === 'listening') {
+        anim.gestureTarget = 0.2;
+      } else {
+        anim.gestureTarget = 0;
+      }
+      anim.gestureIntensity += (anim.gestureTarget - anim.gestureIntensity) * 0.04;
+
+      // === ARM GESTURES ===
+      if (currentState === 'speaking') {
+        if (bodyParts.rightArm) {
+          const orig = getOriginal(bodyParts.rightArm);
+          bodyParts.rightArm.rotation.x = orig.rx + Math.sin(anim.gesturePhase * 1.2) * 0.2 * anim.gestureIntensity;
+          bodyParts.rightArm.rotation.z = orig.rz + Math.sin(anim.gesturePhase * 0.8) * 0.12 * anim.gestureIntensity;
+          bodyParts.rightArm.position.y = orig.py + Math.sin(anim.gesturePhase * 1.0) * 0.03 * anim.gestureIntensity;
+        }
+        if (bodyParts.rightHand) {
+          const orig = getOriginal(bodyParts.rightHand);
+          bodyParts.rightHand.rotation.x = orig.rx + Math.sin(anim.gesturePhase * 1.5 + 0.5) * 0.15 * anim.gestureIntensity;
+          bodyParts.rightHand.rotation.z = orig.rz + Math.sin(anim.gesturePhase * 1.1) * 0.1 * anim.gestureIntensity;
+        }
+        if (bodyParts.leftArm) {
+          const orig = getOriginal(bodyParts.leftArm);
+          bodyParts.leftArm.rotation.x = orig.rx + Math.sin(anim.gesturePhase * 0.9 + Math.PI) * 0.15 * anim.gestureIntensity;
+          bodyParts.leftArm.rotation.z = orig.rz - Math.sin(anim.gesturePhase * 0.7 + 1.0) * 0.1 * anim.gestureIntensity;
+          bodyParts.leftArm.position.y = orig.py + Math.sin(anim.gesturePhase * 0.85 + 2) * 0.02 * anim.gestureIntensity;
+        }
+        if (bodyParts.leftHand) {
+          const orig = getOriginal(bodyParts.leftHand);
+          bodyParts.leftHand.rotation.x = orig.rx + Math.sin(anim.gesturePhase * 1.3 + 2.0) * 0.12 * anim.gestureIntensity;
+        }
+      } else if (currentState === 'thinking') {
+        if (bodyParts.rightArm) {
+          const orig = getOriginal(bodyParts.rightArm);
+          const lerp = anim.gestureIntensity;
+          bodyParts.rightArm.rotation.x = orig.rx - 0.4 * lerp + Math.sin(t * 0.3) * 0.02;
+          bodyParts.rightArm.rotation.z = orig.rz + 0.2 * lerp;
+          bodyParts.rightArm.position.y = orig.py + 0.02 * lerp;
+        }
+        if (bodyParts.rightHand) {
+          const orig = getOriginal(bodyParts.rightHand);
+          bodyParts.rightHand.rotation.x = orig.rx - 0.3 * anim.gestureIntensity;
+        }
+        if (bodyParts.leftArm) {
+          const orig = getOriginal(bodyParts.leftArm);
+          bodyParts.leftArm.rotation.z = orig.rz - 0.05 * anim.gestureIntensity;
+        }
+      } else {
+        for (const key of ['leftArm', 'rightArm', 'leftHand', 'rightHand']) {
+          const node = bodyParts[key];
+          if (!node) continue;
+          const orig = getOriginal(node);
+          node.rotation.x += (orig.rx - node.rotation.x) * 3 * delta;
+          node.rotation.y += (orig.ry - node.rotation.y) * 3 * delta;
+          node.rotation.z += (orig.rz - node.rotation.z) * 3 * delta;
+          node.position.x += (orig.px - node.position.x) * 3 * delta;
+          node.position.y += (orig.py - node.position.y) * 3 * delta;
+          node.position.z += (orig.pz - node.position.z) * 3 * delta;
+        }
+      }
+
+      // === BREATHING ===
+      if (bodyParts.whole) {
+        bodyParts.whole.position.y = (originalTransforms.get(bodyParts.whole)?.py || bodyParts.whole.position.y)
+          + Math.sin(anim.breathPhase * 1.5) * 0.008;
+      }
+      if (bodyParts.torso) {
+        const orig = getOriginal(bodyParts.torso);
+        bodyParts.torso.rotation.x = orig.rx + Math.sin(anim.breathPhase * 1.5) * 0.006;
+      }
+
+      // === IDLE SWAY ===
+      if (bodyParts.whole && currentState === 'idle') {
+        bodyParts.whole.rotation.y = Math.sin(anim.breathPhase * 0.3) * 0.006;
+      }
+    }
+
+    // ============================================================
+    //  ENVIRONMENT ANIMATION
+    // ============================================================
+
+    function animateEnvironment(delta) {
+      const t = clock.getElapsedTime();
+
+      ring.rotation.z = t * 0.15;
+      outerRing.rotation.z = -t * 0.08;
+      innerRing.rotation.z = t * 0.25;
+
+      const stateColors = { idle: 0x7b2fbe, listening: 0x00e5ff, thinking: 0xffd740, speaking: 0xe040fb, error: 0xff5252 };
+      ring.material.color.setHex(stateColors[currentState] || 0x7b2fbe);
+      ring.material.opacity = 0.25 + Math.sin(t * 2) * 0.1;
+      innerRing.material.color.setHex(stateColors[currentState] || 0xe040fb);
+      innerRing.material.opacity = 0.15 + Math.sin(t * 3 + 1) * 0.08;
+
+      // Orbiting particles
+      const positions = particles.geometry.attributes.position.array;
+      for (let i = 0; i < particleCount; i++) {
+        particleSpeeds[i].angle += particleSpeeds[i].orbit;
+        positions[i*3] += Math.cos(particleSpeeds[i].angle) * 0.002;
+        positions[i*3+1] += particleSpeeds[i].y;
+        positions[i*3+2] += Math.sin(particleSpeeds[i].angle) * 0.002;
+        if (positions[i*3+1] > 4) {
+          positions[i*3+1] = 0;
+          const angle = Math.random() * Math.PI * 2;
+          const dist = Math.random() * 3 + 0.5;
+          positions[i*3] = Math.cos(angle) * dist;
+          positions[i*3+2] = Math.sin(angle) * dist;
+        }
+      }
+      particles.geometry.attributes.position.needsUpdate = true;
+      particleMat.color.setHex(stateColors[currentState] || 0x7b2fbe);
+
+      // Reactive lighting
+      const stateIntensity = currentState === 'speaking' ? 0.8 : currentState === 'listening' ? 0.6 : 0.4;
+      spotLight.intensity = stateIntensity + Math.sin(t * 4) * 0.1;
+
+      // Visualizer bars
+      const bars = vizContainer.children;
+      for (let i = 0; i < bars.length; i++) {
+        let h = 3;
+        if (currentState === 'speaking') {
+          h = 3 + Math.random() * 25 + Math.sin(t * 10 + i * 0.5) * 8;
+        } else if (currentState === 'listening') {
+          h = 3 + Math.sin(t * 3 + i * 0.3) * 6 + Math.random() * 4;
+        } else if (currentState === 'thinking') {
+          h = 3 + Math.sin(t * 1.5 + i * 0.2) * 4;
+        }
+        bars[i].style.height = h + 'px';
+      }
+
+      const barColor = {
+        idle: 'linear-gradient(to top, #7b2fbe, #e040fb)',
+        listening: 'linear-gradient(to top, #00e5ff, #7b2fbe)',
+        thinking: 'linear-gradient(to top, #ffd740, #ff9100)',
+        speaking: 'linear-gradient(to top, #e040fb, #ff5252)',
+        error: 'linear-gradient(to top, #ff5252, #ff1744)',
+      };
+      for (let i = 0; i < bars.length; i++) {
+        bars[i].style.background = barColor[currentState] || barColor.idle;
+      }
+    }
+
+    // ============================================================
+    //  STATE MANAGEMENT
+    // ============================================================
+
+    function updateState(state) {
+      currentState = state;
+      document.getElementById('state-indicator').className = state;
+      const label = document.getElementById('state-label');
+      label.textContent = state.toUpperCase();
+      const colors = { idle:'#7b2fbe', listening:'#00e5ff', thinking:'#ffd740', speaking:'#e040fb', error:'#ff5252' };
+      label.style.color = colors[state] || '#7b2fbe';
+      // Update background state color
+      if (window.setBgState) window.setBgState(state);
+    }
+
+    // ============================================================
+    //  MODEL LOADING
+    // ============================================================
+
+    const loader = new THREE.GLTFLoader();
+
+    function loadModel() {
+      document.getElementById('status-text').textContent = 'Loading 3D character...';
+
+      loader.load(
+        CONFIG.modelPath,
+        (gltf) => {
+          model = gltf.scene;
+
+          // Scale and center
+          const box = new THREE.Box3().setFromObject(model);
+          const size = box.getSize(new THREE.Vector3());
+          const center = box.getCenter(new THREE.Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 2.2 / maxDim;
+          model.scale.setScalar(scale);
+          model.position.y = -(center.y * scale) + (size.y * scale * 0.02);
+          model.position.x = -(center.x * scale);
+          model.position.z = -(center.z * scale);
+
+          // Enable shadows
+          model.traverse((child) => {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+
+          scene.add(model);
+
+          // Animation mixer
+          if (gltf.animations && gltf.animations.length > 0) {
+            mixer = new THREE.AnimationMixer(model);
+            gltf.animations.forEach((clip) => {
+              animations[clip.name.toLowerCase()] = mixer.clipAction(clip);
+            });
+          }
+
+          // Scan for body parts
+          findBodyParts();
+
+          document.getElementById('status-text').textContent = 'Ready for commands';
+          updateState('idle');
+        },
+        (progress) => {
+          if (progress.total > 0) {
+            const pct = Math.round((progress.loaded / progress.total) * 100);
+            document.getElementById('status-text').textContent = 'Loading model... ' + pct + '%';
+          }
+        },
+        (error) => {
+          console.error('Model load error:', error);
+          document.getElementById('status-text').textContent = 'Model load failed. Check console.';
+        }
+      );
+    }
+
+    // ============================================================
+    //  WEBSOCKET
+    // ============================================================
+
+    let ws = null;
+    let reconnectTimer = null;
+    const connDot = document.getElementById('connection-dot');
+
+    function connectWebSocket() {
+      try {
+        ws = new WebSocket('ws://localhost:' + CONFIG.wsPort);
+        ws.onopen = () => {
+          if (reconnectTimer) { clearInterval(reconnectTimer); reconnectTimer = null; }
+          connDot.classList.add('connected');
+          connDot.title = 'Voice Assistant Connected';
+        };
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.state && data.state !== currentState) updateState(data.state);
+            if (data.status !== undefined) document.getElementById('status-text').textContent = data.status;
+            if (data.command !== undefined) document.getElementById('command-text').textContent = data.command ? '"' + data.command + '"' : '';
+          } catch(e) {}
+        };
+        ws.onclose = () => {
+          connDot.classList.remove('connected');
+          connDot.title = 'Voice Assistant Disconnected';
+          if (!reconnectTimer) reconnectTimer = setInterval(connectWebSocket, 3000);
+        };
+        ws.onerror = () => {
+          connDot.classList.remove('connected');
+        };
+      } catch(e) {}
+    }
+
+    // ============================================================
+    //  RENDER LOOP
+    // ============================================================
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      if (mixer) mixer.update(delta);
+      animateCharacter(delta);
+      animateEnvironment(delta);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Expose for pywebview API
+    window.setAssistantState = function(state, status, command) {
+      if (state) updateState(state);
+      if (status !== undefined) document.getElementById('status-text').textContent = status;
+      if (command !== undefined) document.getElementById('command-text').textContent = command ? '"' + command + '"' : '';
+    };
+
+    // Init
+    loadModel();
+    animate();
+    connectWebSocket();
+  </script>
+</body>
+</html>

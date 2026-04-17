@@ -1,0 +1,29 @@
+{
+  "last_updated": "2000-01-01T00:00:00",
+  "current": {
+    "temperature": 72,
+    "condition": "partly cloudy",
+    "humidity": 65,
+    "wind_speed": 8
+  },
+  "forecast": [
+    {
+      "day": "Today",
+      "high": 75,
+      "low": 60,
+      "condition": "sunny"
+    },
+    {
+      "day": "Tomorrow",
+      "high": 78,
+      "low": 62,
+      "condition": "partly cloudy"
+    },
+    {
+      "day": "Day after",
+      "high": 73,
+      "low": 58,
+      "condition": "cloudy"
+    }
+  ]
+}

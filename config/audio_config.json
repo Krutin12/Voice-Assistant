@@ -1,0 +1,7 @@
+{
+  "audio_enabled": true,
+  "voice_input_enabled": true,
+  "wake_word_sensitivity": 0.7,
+  "microphone_calibration": true,
+  "speech_recognition_timeout": 5.0
+}

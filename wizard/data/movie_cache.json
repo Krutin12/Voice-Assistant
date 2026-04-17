@@ -1,0 +1,40 @@
+{
+  "last_updated": "2025-12-22T20:55:00.418125",
+  "movies": [
+    {
+      "title": "The Adventure Begins",
+      "year": 2023,
+      "genre": "adventure",
+      "rating": 8.2,
+      "description": "An exciting journey through unknown territories."
+    },
+    {
+      "title": "Comedy Central",
+      "year": 2023,
+      "genre": "comedy",
+      "rating": 7.5,
+      "description": "A hilarious story about everyday life situations."
+    },
+    {
+      "title": "Mystery Manor",
+      "year": 2022,
+      "genre": "mystery",
+      "rating": 8.7,
+      "description": "A thrilling mystery set in an old mansion."
+    },
+    {
+      "title": "Space Odyssey",
+      "year": 2023,
+      "genre": "science fiction",
+      "rating": 9.1,
+      "description": "An epic journey through the cosmos."
+    },
+    {
+      "title": "Romance in Paris",
+      "year": 2022,
+      "genre": "romance",
+      "rating": 7.8,
+      "description": "A beautiful love story set in the city of lights."
+    }
+  ]
+}

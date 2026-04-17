@@ -1,0 +1,1 @@
+"""Performance tests for Wizard Voice Assistant"""

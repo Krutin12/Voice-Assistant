@@ -1,0 +1,66 @@
+{
+  "assistant_name": "Wizard",
+  "wake_words": [
+    "Hey Wizard",
+    "Wizard"
+  ],
+  "voice_settings": {
+    "gender": "female",
+    "speed": 150,
+    "pitch": 50,
+    "volume": 0.8,
+    "voice_id": null,
+    "language": "en",
+    "accent": "us"
+  },
+  "personality_settings": {
+    "personality_type": "professional",
+    "humor_level": "moderate",
+    "verbosity": "normal",
+    "formality": "polite",
+    "response_style": "helpful",
+    "custom_name": "Wizard",
+    "greeting_style": "standard"
+  },
+  "security_settings": {
+    "require_confirmation": true,
+    "safe_mode": false,
+    "password_protected_commands": [
+      "shutdown",
+      "restart",
+      "delete"
+    ]
+  },
+  "applications": {
+    "calculator": "calc.exe",
+    "notepad": "notepad.exe",
+    "browser": "chrome.exe"
+  },
+  "preferences": {
+    "name": "User",
+    "timezone": "UTC",
+    "language": "en",
+    "personalized_responses": true,
+    "learning_enabled": true,
+    "preferred_units": "metric",
+    "date_format": "MM/DD/YYYY",
+    "time_format": "12",
+    "temperature_unit": "fahrenheit",
+    "currency": "USD",
+    "location": "",
+    "interests": []
+  },
+  "speech_recognition": {
+    "timeout": 10.0,
+    "phrase_timeout": 1.0,
+    "energy_threshold": 200,
+    "dynamic_energy_threshold": true,
+    "min_confidence": 0.3,
+    "calibration_duration": 2.0
+  },
+  "wake_word": {
+    "sensitivity": 0.8,
+    "cooldown": 1.0
+  },
+  "audio_optimized": true
+}

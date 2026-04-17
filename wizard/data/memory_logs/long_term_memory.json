@@ -1,0 +1,60 @@
+{
+  "projects": [
+    {
+      "name": "my voice assistant",
+      "created": "2026-03-01T10:55:46.242642",
+      "last_seen": "2026-03-01T10:55:46.242645",
+      "technologies": [
+        "python",
+        "go"
+      ],
+      "status": "active",
+      "issues": [],
+      "mention_count": 1
+    }
+  ],
+  "tech_stack": {
+    "languages": [
+      "python",
+      "go"
+    ],
+    "frameworks": [],
+    "tools": [],
+    "ide_preferences": [
+      "VS Code"
+    ],
+    "deployment_platforms": [],
+    "libraries": []
+  },
+  "mistakes": [
+    {
+      "error_key": "modulenotfounderror",
+      "error_text": "modulenotfounderror",
+      "fixes": [],
+      "occurrences": 1,
+      "fix_success_rate": 0.0,
+      "first_seen": "2026-03-01T10:55:46.246636",
+      "last_seen": "2026-03-01T10:55:46.246640"
+    }
+  ],
+  "deadlines": [
+    {
+      "task": "march 15 for final submission",
+      "deadline_raw": "",
+      "created": "2026-03-01T10:55:46.255565",
+      "status": "pending",
+      "postponed_count": 0
+    },
+    {
+      "task": "a report at 5:00 p",
+      "deadline_raw": "",
+      "created": "2026-04-02T18:19:35.450518",
+      "status": "pending",
+      "postponed_count": 0
+    }
+  ],
+  "meta": {
+    "created": "2026-03-01T10:55:46.229243",
+    "last_updated": "2026-03-30T08:42:21.120032"
+  }
+}

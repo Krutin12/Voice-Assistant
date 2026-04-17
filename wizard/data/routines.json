@@ -1,0 +1,188 @@
+{
+  "good_morning": {
+    "name": "good_morning",
+    "description": "Morning routine with time, weather, news, and app launching",
+    "steps": [
+      {
+        "command": "what_time",
+        "delay": 0.0,
+        "parameters": {}
+      },
+      {
+        "command": "what_date",
+        "delay": 1.0,
+        "parameters": {}
+      },
+      {
+        "command": "weather",
+        "delay": 2.0,
+        "parameters": {}
+      },
+      {
+        "command": "news",
+        "delay": 3.0,
+        "parameters": {}
+      },
+      {
+        "command": "open_application",
+        "delay": 4.0,
+        "parameters": {
+          "application": "chrome"
+        }
+      },
+      {
+        "command": "open_application",
+        "delay": 5.0,
+        "parameters": {
+          "application": "spotify"
+        }
+      },
+      {
+        "command": "productivity_summary",
+        "delay": 6.0,
+        "parameters": {}
+      }
+    ],
+    "enabled": true,
+    "created_at": "2025-12-22T21:41:05.185269",
+    "last_executed": null
+  },
+  "good_night": {
+    "name": "good_night",
+    "description": "Night routine to close apps and lock system",
+    "steps": [
+      {
+        "command": "set_volume",
+        "delay": 0.0,
+        "parameters": {
+          "volume_level": 20
+        }
+      },
+      {
+        "command": "close_application",
+        "delay": 1.0,
+        "parameters": {
+          "application": "chrome"
+        }
+      },
+      {
+        "command": "close_application",
+        "delay": 2.0,
+        "parameters": {
+          "application": "spotify"
+        }
+      },
+      {
+        "command": "system_lock",
+        "delay": 3.0,
+        "parameters": {}
+      }
+    ],
+    "enabled": true,
+    "created_at": "2025-12-22T21:41:05.185287",
+    "last_executed": null
+  },
+  "work_mode": {
+    "name": "work_mode",
+    "description": "Setup work environment with development tools",
+    "steps": [
+      {
+        "command": "open_application",
+        "delay": 0.0,
+        "parameters": {
+          "application": "vscode"
+        }
+      },
+      {
+        "command": "open_application",
+        "delay": 1.0,
+        "parameters": {
+          "application": "teams"
+        }
+      },
+      {
+        "command": "open_application",
+        "delay": 2.0,
+        "parameters": {
+          "application": "outlook"
+        }
+      },
+      {
+        "command": "set_volume",
+        "delay": 3.0,
+        "parameters": {
+          "volume_level": 30
+        }
+      }
+    ],
+    "enabled": true,
+    "created_at": "2025-12-22T21:41:05.185290",
+    "last_executed": null
+  },
+  "test_routine": {
+    "name": "test_routine",
+    "description": "Test routine",
+    "steps": [
+      {
+        "command": "what_time",
+        "delay": 0.0,
+        "parameters": {}
+      },
+      {
+        "command": "weather",
+        "delay": 1.0,
+        "parameters": {}
+      }
+    ],
+    "enabled": true,
+    "created_at": "2025-12-22T21:41:05.186476",
+    "last_executed": null
+  },
+  "integration_test": {
+    "name": "integration_test",
+    "description": "Integration test routine",
+    "steps": [
+      {
+        "command": "what_time",
+        "delay": 0.0,
+        "parameters": {}
+      }
+    ],
+    "enabled": true,
+    "created_at": "2025-12-22T21:41:13.481126",
+    "last_executed": null
+  },
+  "demo_routine": {
+    "name": "demo_routine",
+    "description": "Demo routine for testing",
+    "steps": [
+      {
+        "command": "what_time",
+        "delay": 0.0,
+        "parameters": {}
+      },
+      {
+        "command": "weather",
+        "delay": 1.0,
+        "parameters": {}
+      },
+      {
+        "command": "open_application",
+        "delay": 2.0,
+        "parameters": {
+          "application": "notepad"
+        }
+      },
+      {
+        "command": "set_volume",
+        "delay": 3.0,
+        "parameters": {
+          "volume_level": 50
+        }
+      }
+    ],
+    "enabled": true,
+    "created_at": "2025-12-22T21:41:45.101504",
+    "last_executed": null
+  }
+}

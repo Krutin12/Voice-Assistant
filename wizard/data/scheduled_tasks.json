@@ -1,0 +1,20 @@
+{
+  "test_task": {
+    "name": "test_task",
+    "routine_name": "good_morning",
+    "schedule_type": "daily",
+    "schedule_time": "08:00",
+    "enabled": true,
+    "created_at": "2025-12-22T21:41:09.257159",
+    "last_executed": null
+  },
+  "morning_briefing": {
+    "name": "morning_briefing",
+    "routine_name": "good_morning",
+    "schedule_type": "daily",
+    "schedule_time": "08:00",
+    "enabled": true,
+    "created_at": "2025-12-22T21:41:45.102258",
+    "last_executed": null
+  }
+}

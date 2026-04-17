@@ -1,0 +1,104 @@
+[
+  {
+    "timestamp": "2025-12-22T21:41:13.427154",
+    "intent": "open_application",
+    "raw_text": "open chrome",
+    "entities": {
+      "application": "chrome"
+    },
+    "confidence": 0.9,
+    "response_text": "Opening Chrome",
+    "action_taken": true,
+    "error": false
+  },
+  {
+    "timestamp": "2025-12-22T21:41:47.124984",
+    "intent": "open_application",
+    "raw_text": "open chrome",
+    "entities": {
+      "application": "chrome"
+    },
+    "confidence": 0.9,
+    "response_text": "Opening Chrome browser",
+    "action_taken": true,
+    "error": false
+  },
+  {
+    "timestamp": "2025-12-22T21:41:47.128480",
+    "intent": "set_volume",
+    "raw_text": "set volume to 75",
+    "entities": {
+      "volume_level": 75
+    },
+    "confidence": 0.8,
+    "response_text": "Volume set to 75%",
+    "action_taken": true,
+    "error": false
+  },
+  {
+    "timestamp": "2025-12-22T21:41:47.131935",
+    "intent": "tell_joke",
+    "raw_text": "tell me a programming joke",
+    "entities": {
+      "category": "programming"
+    },
+    "confidence": 0.9,
+    "response_text": "Here's a programming joke...",
+    "action_taken": true,
+    "error": false
+  },
+  {
+    "timestamp": "2025-12-22T21:41:47.133715",
+    "intent": "open_application",
+    "raw_text": "launch chrome",
+    "entities": {
+      "application": "chrome"
+    },
+    "confidence": 0.9,
+    "response_text": "Chrome is already running",
+    "action_taken": true,
+    "error": false
+  },
+  {
+    "timestamp": "2025-12-22T21:41:47.134806",
+    "intent": "set_volume",
+    "raw_text": "volume 70",
+    "entities": {
+      "volume_level": 70
+    },
+    "confidence": 0.8,
+    "response_text": "Volume set to 70%",
+    "action_taken": true,
+    "error": false
+  },
+  {
+    "timestamp": "2025-12-22T21:41:47.270105",
+    "intent": "list_routines",
+    "raw_text": "list routines",
+    "entities": {},
+    "confidence": 1.0,
+    "response_text": "Available routines:\n• good_morning: Morning routine with time, weather, news, and app launching (7 steps, enabled, last run: never)\n• good_night: Night routine to close apps and lock system (4 steps, enabled, last run: never)\n• work_mode: Setup work environment with development tools (4 steps, enabled, last run: never)\n• test_routine: Test routine (2 steps, enabled, last run: never)\n• integration_test: Integration test routine (1 steps, enabled, last run: never)\n• demo_routine: Demo routine for testing (4 steps, enabled, last run: never)",
+    "action_taken": true,
+    "error": false
+  },
+  {
+    "timestamp": "2025-12-22T21:41:47.271901",
+    "intent": "personalized_suggestions",
+    "raw_text": "what should i do",
+    "entities": {},
+    "confidence": 1.0,
+    "response_text": "Based on your usage patterns, here are some personalized suggestions:\n1. Ready to wind down? I can run your night routine.\n2. Want to hear a programming?",
+    "action_taken": true,
+    "error": false
+  },
+  {
+    "timestamp": "2025-12-22T21:41:47.273178",
+    "intent": "batch_status",
+    "raw_text": "batch status",
+    "entities": {},
+    "confidence": 1.0,
+    "response_text": "Batch Operation System Status:\n• Auto-responses: 6 total (6 enabled)\n• User preferences: 4 learned\n• Command history: 8 commands recorded\n\nTop Usage Patterns:",
+    "action_taken": true,
+    "error": false
+  }
+]

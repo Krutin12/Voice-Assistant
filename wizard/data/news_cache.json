@@ -1,0 +1,47 @@
+{
+  "last_updated": "2000-01-01T00:00:00",
+  "headlines": {
+    "general": [
+      {
+        "title": "Local community center opens new programs",
+        "source": "Local News"
+      },
+      {
+        "title": "Technology advances continue to shape daily life",
+        "source": "Tech News"
+      },
+      {
+        "title": "Weather patterns show seasonal changes",
+        "source": "Weather Service"
+      }
+    ],
+    "technology": [
+      {
+        "title": "New AI developments announced",
+        "source": "Tech Today"
+      },
+      {
+        "title": "Software updates improve user experience",
+        "source": "Digital News"
+      },
+      {
+        "title": "Cybersecurity measures enhanced",
+        "source": "Security Weekly"
+      }
+    ],
+    "sports": [
+      {
+        "title": "Local teams prepare for upcoming season",
+        "source": "Sports News"
+      },
+      {
+        "title": "Athletic programs expand community outreach",
+        "source": "Community Sports"
+      },
+      {
+        "title": "Youth leagues show strong participation",
+        "source": "Youth Sports"
+      }
+    ]
+  }
+}

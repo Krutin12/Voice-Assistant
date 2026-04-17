@@ -1,0 +1,60 @@
+{
+  "last_updated": "2000-01-01T00:00:00",
+  "scores": {
+    "general": [
+      {
+        "team1": "Home Team",
+        "score1": 3,
+        "team2": "Away Team",
+        "score2": 2,
+        "sport": "soccer"
+      },
+      {
+        "team1": "Local Lions",
+        "score1": 85,
+        "team2": "City Eagles",
+        "score2": 78,
+        "sport": "basketball"
+      },
+      {
+        "team1": "Town Tigers",
+        "score1": 7,
+        "team2": "Metro Bears",
+        "score2": 4,
+        "sport": "baseball"
+      }
+    ],
+    "football": [
+      {
+        "team1": "Hometown Heroes",
+        "score1": 21,
+        "team2": "Rival Raiders",
+        "score2": 14,
+        "sport": "football"
+      },
+      {
+        "team1": "City Chargers",
+        "score1": 28,
+        "team2": "Metro Mustangs",
+        "score2": 17,
+        "sport": "football"
+      }
+    ],
+    "basketball": [
+      {
+        "team1": "Local Lions",
+        "score1": 95,
+        "team2": "City Eagles",
+        "score2": 88,
+        "sport": "basketball"
+      },
+      {
+        "team1": "Town Titans",
+        "score1": 102,
+        "team2": "Metro Mavericks",
+        "score2": 97,
+        "sport": "basketball"
+      }
+    ]
+  }
+}

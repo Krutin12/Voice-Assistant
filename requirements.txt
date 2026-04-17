@@ -1,0 +1,104 @@
+# Wizard Voice Assistant Dependencies
+# Core Python packages for offline voice assistant functionality
+
+# Audio Processing and Speech Recognition
+pyaudio==0.2.13                    # Audio input/output
+SpeechRecognition==3.10.0          # Speech recognition library
+vosk==0.3.45                       # Offline speech recognition
+pocketsphinx==5.0.0                # Offline speech recognition (CMU Sphinx)
+pydub==0.25.1                      # Audio manipulation
+
+# Text-to-Speech
+pyttsx3==2.90                      # Cross-platform TTS engine
+comtypes==1.2.0                    # COM type support for pycaw
+gTTS==2.3.2                        # Google Text-to-Speech (offline fallback)
+
+# Natural Language Processing
+nltk==3.8.1                        # Natural language toolkit
+fuzzywuzzy==0.18.0                 # Fuzzy string matching
+python-Levenshtein==0.21.1         # Fast string matching
+
+# System Integration
+psutil==5.9.5                      # System and process utilities
+pyautogui==0.9.54                  # GUI automation
+pycaw==20230407                     # Windows audio control
+keyboard==0.13.5                   # Global hotkeys and keyboard control
+mouse==0.7.1                       # Mouse control
+pywin32==306                       # Windows API access
+win32gui                           # Windows GUI API (part of pywin32)
+win32con                           # Windows constants (part of pywin32)
+win32process                       # Windows process API (part of pywin32)
+win32api                           # Windows API (part of pywin32)
+win32clipboard                     # Windows clipboard API (part of pywin32)
+
+# Web and Network
+requests==2.31.0                   # HTTP library
+beautifulsoup4==4.12.2             # Web scraping
+selenium==4.11.2                   # Browser automation
+feedparser==6.0.10                 # RSS feed parsing
+
+# Data Storage and Management
+# sqlite3 is built-in to Python, no installation needed
+pandas==2.0.3                      # Data manipulation
+numpy==1.24.3                      # Numerical computing
+
+# File and System Operations
+watchdog==3.0.0                    # File system monitoring
+# pathlib and shutil are built-in to Python, no installation needed
+
+# Date and Time
+python-dateutil==2.8.2             # Date parsing and manipulation
+pytz==2023.3                       # Timezone handling
+
+# Configuration and Serialization
+pyyaml==6.0.1                      # YAML configuration support
+toml==0.10.2                       # TOML configuration support
+
+# Multimedia and Entertainment
+pygame==2.5.0                      # Game development and audio
+pillow==10.0.0                     # Image processing
+opencv-python==4.8.0.74            # Computer vision (for screenshots)
+
+# Smart Home Integration (Optional)
+paho-mqtt==1.6.1                   # MQTT client for IoT devices
+zeroconf==0.71.0                   # Service discovery
+
+# Development and Testing
+pytest==7.4.0                      # Testing framework
+pytest-cov==4.1.0                  # Coverage reporting
+hypothesis==6.82.0                  # Property-based testing
+black==23.7.0                      # Code formatting
+flake8==6.0.0                      # Code linting
+
+# Performance and Optimization
+cachetools==5.3.1                  # Caching utilities
+memory-profiler==0.60.0            # Memory usage profiling
+
+# Cross-platform Compatibility
+plyer==2.1.0                       # Platform-specific features
+appdirs==1.4.4                     # Application directories
+
+# Security
+cryptography==41.0.3               # Encryption and security
+bcrypt==4.0.1                      # Password hashing
+
+# Logging and Monitoring
+colorlog==6.7.0                    # Colored logging output
+
+# Mathematical Operations
+sympy==1.12                        # Symbolic mathematics
+scipy==1.11.1                      # Scientific computing
+
+# Additional Utilities
+click==8.1.6                       # Command line interface
+tqdm==4.65.0                       # Progress bars
+rich==13.5.2                       # Rich text and beautiful formatting
+
+# Task Scheduling
+schedule==1.2.0                    # Job scheduling library
+
+# Note: The following are built-in Python modules and don't need installation:
+# - sqlite3 (database support)
+# - pathlib (path handling) 
+# - shutil (file operations)
+# - audioop (audio operations) - removed as it's deprecated in Python 3.13

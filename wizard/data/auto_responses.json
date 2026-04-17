@@ -1,0 +1,74 @@
+{
+  "greeting": {
+    "trigger_patterns": [
+      "hello",
+      "hi",
+      "hey",
+      "good morning",
+      "good afternoon"
+    ],
+    "response_text": "Hello! How can I help you today?",
+    "confidence_threshold": 0.9,
+    "enabled": true,
+    "usage_count": 2,
+    "last_used": "2025-12-22T21:41:47.251266"
+  },
+  "thanks": {
+    "trigger_patterns": [
+      "thank you",
+      "thanks",
+      "appreciate it"
+    ],
+    "response_text": "You're welcome! Is there anything else I can help you with?",
+    "confidence_threshold": 0.9,
+    "enabled": true,
+    "usage_count": 1,
+    "last_used": "2025-12-22T21:41:13.323730"
+  },
+  "status_check": {
+    "trigger_patterns": [
+      "how are you",
+      "status",
+      "are you working"
+    ],
+    "response_text": "I'm working perfectly and ready to help! All systems are operational.",
+    "confidence_threshold": 0.8,
+    "enabled": true,
+    "usage_count": 0,
+    "last_used": null
+  },
+  "capabilities": {
+    "trigger_patterns": [
+      "what can you do",
+      "help me",
+      "capabilities"
+    ],
+    "response_text": "I can help with system control, file management, productivity tasks, entertainment, and much more. Just ask me what you need!",
+    "confidence_threshold": 0.8,
+    "enabled": true,
+    "usage_count": 0,
+    "last_used": null
+  },
+  "test_response": {
+    "trigger_patterns": [
+      "test trigger"
+    ],
+    "response_text": "Test response message",
+    "confidence_threshold": 0.8,
+    "enabled": true,
+    "usage_count": 1,
+    "last_used": "2025-12-22T21:41:13.391788"
+  },
+  "demo_response": {
+    "trigger_patterns": [
+      "demo",
+      "test mode",
+      "show demo"
+    ],
+    "response_text": "This is a demo of the auto-response system!",
+    "confidence_threshold": 0.8,
+    "enabled": true,
+    "usage_count": 1,
+    "last_used": "2025-12-22T21:41:47.122349"
+  }
+}

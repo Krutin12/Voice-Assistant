@@ -1,0 +1,106 @@
+# Wizard Voice Assistant Dependencies - Python 3.13 Compatible
+# Core Python packages for offline voice assistant functionality
+
+# Text-to-Speech (Essential)
+pyttsx3==2.90                      # Cross-platform TTS engine
+
+# Natural Language Processing (Essential)
+nltk==3.8.1                        # Natural language toolkit
+fuzzywuzzy==0.18.0                 # Fuzzy string matching
+python-Levenshtein==0.21.1         # Fast string matching
+
+# System Integration (Essential)
+psutil==5.9.5                      # System and process utilities
+requests==2.31.0                   # HTTP library
+
+# Web and Network (Essential)
+beautifulsoup4==4.12.2             # Web scraping
+feedparser==6.0.10                 # RSS feed parsing
+
+# Data Storage and Management (Essential)
+pandas==2.0.3                      # Data manipulation
+numpy==1.24.3                      # Numerical computing
+
+# File and System Operations (Essential)
+watchdog==3.0.0                    # File system monitoring
+
+# Date and Time (Essential)
+python-dateutil==2.8.2             # Date parsing and manipulation
+pytz==2023.3                       # Timezone handling
+
+# Configuration and Serialization (Essential)
+pyyaml==6.0.1                      # YAML configuration support
+toml==0.10.2                       # TOML configuration support
+
+# Cross-platform Compatibility (Essential)
+plyer==2.1.0                       # Platform-specific features
+appdirs==1.4.4                     # Application directories
+
+# Security (Essential)
+cryptography==41.0.3               # Encryption and security
+bcrypt==4.0.1                      # Password hashing
+
+# Logging and Monitoring (Essential)
+colorlog==6.7.0                    # Colored logging output
+
+# Mathematical Operations (Essential)
+sympy==1.12                        # Symbolic mathematics
+
+# Additional Utilities (Essential)
+click==8.1.6                       # Command line interface
+tqdm==4.65.0                       # Progress bars
+rich==13.5.2                       # Rich text and beautiful formatting
+
+# Task Scheduling (Essential)
+schedule==1.2.0                    # Job scheduling library
+
+# Development and Testing (Essential)
+pytest==7.4.0                      # Testing framework
+pytest-cov==4.1.0                  # Coverage reporting
+
+# Performance and Optimization (Essential)
+cachetools==5.3.1                  # Caching utilities
+
+# Audio Processing (Optional - may not work on Python 3.13)
+# pyaudio==0.2.11                  # Audio input/output - install manually if needed
+# SpeechRecognition==3.10.0        # Speech recognition library - install manually if needed
+# vosk==0.3.45                     # Offline speech recognition - install manually if needed
+# pydub==0.25.1                    # Audio manipulation - install manually if needed
+# gTTS==2.3.2                      # Google Text-to-Speech - install manually if needed
+
+# GUI Automation (Optional - may have issues on Python 3.13)
+# pyautogui==0.9.54                # GUI automation - install manually if needed
+# keyboard==0.13.5                 # Global hotkeys - install manually if needed
+# mouse==0.7.1                     # Mouse control - install manually if needed
+
+# Windows-specific (Optional)
+# pywin32==306                     # Windows API access - install manually on Windows if needed
+# pycaw==20220416                  # Windows audio control - install manually on Windows if needed
+
+# Smart Home Integration (Optional)
+# paho-mqtt==1.6.1                 # MQTT client for IoT devices - install manually if needed
+# zeroconf==0.71.0                 # Service discovery - install manually if needed
+
+# Multimedia (Optional)
+# pygame==2.5.0                    # Game development and audio - install manually if needed
+# pillow==10.0.0                   # Image processing - install manually if needed
+# opencv-python==4.8.0.74          # Computer vision - install manually if needed
+
+# Browser Automation (Optional)
+# selenium==4.11.2                 # Browser automation - install manually if needed
+
+# Code Quality (Optional)
+# black==23.7.0                    # Code formatting - install manually if needed
+# flake8==6.0.0                    # Code linting - install manually if needed
+
+# Memory Profiling (Optional)
+# memory-profiler==0.60.0          # Memory usage profiling - install manually if needed
+
+# Scientific Computing (Optional)
+# scipy==1.11.1                    # Scientific computing - install manually if needed
+
+# Note: Built-in modules (no installation needed):
+# - sqlite3 (database support)
+# - pathlib (path handling)
+# - shutil (file operations)
+# - os, sys, time, datetime, json, etc.

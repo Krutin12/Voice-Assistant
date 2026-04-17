@@ -1,0 +1,1 @@
+"""Unit tests for Wizard Voice Assistant components"""
